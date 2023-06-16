@@ -26,9 +26,3 @@ export {
     signup,
     test
 }
-
-// export default {
-//     login,
-//     signup,
-//     test
-// }
