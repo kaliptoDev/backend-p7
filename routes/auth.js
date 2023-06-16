@@ -6,10 +6,10 @@ import {
 } from '../controllers/auth.js';
 const router = Router();
 
-router.post('/signup', await signup)
+router.post('/signup', signup)
 
 
-router.post('/login', await login)
+router.post('/login', login)
 
 router.get('/test', test);
 
