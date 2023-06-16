@@ -13,16 +13,7 @@ const signup = async (req, res) => {
     });
 };
 
-const test = (req, res) => {
-    console.log('Requête reçue !');
-    console.log(req.headers['authorization']);
-    res.status(418).json({
-        message: 'Requête reçue avec contenu: ' + req.headers['authorization']
-    });
-};
-
 export {
     login,
-    signup,
-    test
+    signup
 }
