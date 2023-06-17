@@ -1,4 +1,5 @@
 import Book from "../models/Book.js";
+import { verifyToken } from "./auth.js";
 
 const getBooks = async (req, res) => {
     const books = await Book.find();
@@ -17,9 +18,6 @@ const getBestBooks = (req, res) => {
 };
 
 const createBook = (req, res) => {
-
-    // const book =  req.body;
-
 
     const book = new Book({
         title: req.body.title,

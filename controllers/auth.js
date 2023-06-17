@@ -41,16 +41,33 @@ const login = async (req, res) => {
         return res.status(401).json({ error: 'Wrong password' });
     }
     res.status(200).json({
-        userId: foundUser._id
+        userId: foundUser._id,
+        token: genToken(foundUser.email, process.env.TOKEN_KEY)
     });
 };
 
+const genToken = (email, key) => {
+    return jwt.sign({ email }, key, { 
+        algorithm: 'HS256',
+        expiresIn: process.env.TOKEN_EXPIRATION });
+};
 
-
+const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization'];
+    if (!token) {
+        return res.status(401).json({ error: 'No token provided' });
+    }
+    jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ error: 'Invalid token' });
+        }
+    });
+}
 
 
 
 export {
     login,
-    signup
+    signup,
+    verifyToken
 }
