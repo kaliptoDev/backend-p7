@@ -5,6 +5,7 @@ import Book from './models/Book.js';
 import { config } from 'dotenv';
 // const auth_routes = require('./routes/auth.js');
 import auth_routes from './routes/auth.js';
+import books_routes from './routes/books.js';
 
 
 
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/auth', auth_routes);
+app.use('/api/books', books_routes);
 
 // routing
 // app.use(router);
