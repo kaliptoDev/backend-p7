@@ -16,8 +16,8 @@ const app = express();
 
 //* connect to DB
 connect(`mongodb+srv://${process.env.DBUSER}:${process.env.DBPASSWORD}@grimoire.inlthxy.mongodb.net/mon-vieux-grimoire?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Connexion à MongoDB réussie !'))
-    .catch(() => console.log('Connexion à MongoDB échouée !'));
+    .then(() => console.log('Connexion à MongoDB réussie !')) //! Debug
+    .catch(() => console.log('Connexion à MongoDB échouée !')); //! Debug
 
 //* handle json
 app.use(json());

@@ -71,11 +71,11 @@ const genToken = (email, key) => {
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
     if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
+        return res.status(401).json({ error: 'No token provided, please connect' });
     }
     jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
         if (err) {
-            return res.status(401).json({ error: 'Invalid token' });
+            return res.status(401).json({ error: 'Invalid token, please reconnect' });
         }
     });
 }

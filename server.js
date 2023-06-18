@@ -42,7 +42,7 @@ const server = createServer(app);
 
 server.on('error', errorHandler);
 server.on('listening', () => {
-    console.log('Serveur lancé');
+    console.log('Serveur lancé'); //! Debug
 });
 
 server.listen(port);
