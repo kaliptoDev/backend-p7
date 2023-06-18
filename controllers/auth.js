@@ -1,5 +1,5 @@
 import User from '../models/User.js';
-
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 // const login = async (req, res) => {
@@ -18,6 +18,20 @@ import bcrypt from 'bcrypt';
 // };
 
 const signup = async (req, res) => {
+
+    if (!req.body.email || !req.body.password) {
+        return res.status(400).json({ error: 'Both email and password fields must be filled' });
+    }
+    req.body.email = req.body.email.toLowerCase();
+
+    const foundUser = await User.findOne({ email: req.body.email });
+    if (foundUser) {
+        console.log('Email already used by another user')   //! Debug
+        return res.status(401).json({ error: 'Email already used by another user' });
+    }
+
+    console.log(req.body.email, req.body.password)    //! Debug
+
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
     const user = new User({
         email: req.body.email,
@@ -26,7 +40,7 @@ const signup = async (req, res) => {
     user.save()
         .then(() => res.status(201).json({ message: "User created successfully" }))
         .catch(error => res.status(400).json({ error }))
-        .finally(() => console.log("User created successfully"));
+        .finally(() => console.log("User created successfully"));   //! Debug
 
 
 };
@@ -44,12 +58,14 @@ const login = async (req, res) => {
         userId: foundUser._id,
         token: genToken(foundUser.email, process.env.TOKEN_KEY)
     });
+    console.log(foundUser)  //! Debug
 };
 
 const genToken = (email, key) => {
-    return jwt.sign({ email }, key, { 
+    return jwt.sign({ email }, key, {
         algorithm: 'HS256',
-        expiresIn: process.env.TOKEN_EXPIRATION });
+        expiresIn: process.env.TOKEN_EXPIRATION
+    });
 };
 
 const verifyToken = (req, res, next) => {
