@@ -6,13 +6,22 @@ import { config } from 'dotenv';
 // const auth_routes = require('./routes/auth.js');
 import auth_routes from './routes/auth.js';
 import books_routes from './routes/books.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 
 
 
 // variable d'environnement
 config();
 
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
 const app = express();
+
+
 
 //* connect to DB
 connect(`mongodb+srv://${process.env.DBUSER}:${process.env.DBPASSWORD}@grimoire.inlthxy.mongodb.net/mon-vieux-grimoire?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -32,6 +41,7 @@ app.use((req, res, next) => {
 
 app.use('/api/auth', auth_routes);
 app.use('/api/books', books_routes);
+app.use('/book_covers', express.static(path.join(__dirname, 'book_covers')));
 
 // routing
 // app.use(router);
