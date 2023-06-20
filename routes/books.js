@@ -8,6 +8,14 @@ import {
     deleteBook,
     rateBook
 } from '../controllers/books.js';
+import Multer from 'multer';
+
+const multer = Multer({
+    storage: Multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024, //? to be changed if needed
+    },
+});
 
 const router = Router();
 
@@ -17,7 +25,7 @@ router.get('/:id', getBookByID)
 
 router.get('/bestrating', getBestBooks)
 
-router.post('/', createBook)
+router.post('/', multer.any(),createBook)
 
 router.put('/:id', updateBook)
 
