@@ -1,5 +1,7 @@
 import Book from "../models/Book.js";
-import { verifyToken } from "./auth.js";
+import { isTokenValidated } from "./auth.js";
+
+
 
 const getBooks = async (req, res) => {
     const books = await Book.find();
@@ -17,14 +19,19 @@ const getBestBooks = (req, res) => {
 
 };
 
-const createBook = (req, res) => {
+const createBook =  (req, res) => {
+
+    const rawBook = req.body.book;
+    const parsedBook = JSON.parse(rawBook);
 
     const book = new Book({
-        title: req.body.title,
-        author: req.body.author,
-        imageUrl: req.body.imageUrl,
-        year: req.body.year,
-        genre: req.body.genre,
+        userId: parsedBook.userId,
+        title: parsedBook.title,
+        author: parsedBook.author,
+        // imageUrl: req.body.book.imageUrl,
+        imageUrl: "https://www.randonnee-urbain-v.com/es/wp-content/uploads/sites/6/2015/04/livres.jpg",
+        year: parsedBook.year,
+        genre: parsedBook.genre,
         ratings: [],
         averageRating: 0
     });
@@ -32,11 +39,20 @@ const createBook = (req, res) => {
     book.save()
         .then(() => res.status(201).json({ message: "Book created successfully" }))
         .catch(error => res.status(400).json({ error }))
+        .catch(error => console.log(error)) //! Debug
         .finally(() => console.log("Book created successfully"));  //! Debug
 
     console.log(book) //! Debug
 
 };
+
+// const createBook = (req, res) => {
+//     console.log(req)   //! Debug
+//     console.log(req.body.book.title)   //! Debug
+//     const book = req.body.book;
+//     const parsedBook = JSON.parse(book);
+//     console.log(parsedBook.userId)   //! Debug
+// };
 
 const updateBook = (req, res) => { };
 

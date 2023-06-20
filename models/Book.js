@@ -1,8 +1,8 @@
-import {mongoose} from 'mongoose';
+import { mongoose } from 'mongoose';
 
 const bookSchema = mongoose.Schema({
 
-    // userId: { type: String, required: true },
+    userId: { type: String, required: true },
     title: { type: String, required: true },
     author: { type: String, required: false },
     imageUrl: { type: String, required: false },
@@ -10,8 +10,10 @@ const bookSchema = mongoose.Schema({
     genre: { type: String, required: false },
     ratings: [
         {
-            userId: { type: String, required: true },
-            grade: { type: Number, required: true }
+            type: {
+                userId: { type: String, required: true },
+                grade: { type: Number, required: true }
+            }, required: false
         }
     ],
     averageRating: { type: Number, required: false }
