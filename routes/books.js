@@ -8,14 +8,9 @@ import {
     deleteBook,
     rateBook
 } from '../controllers/books.js';
-import Multer from 'multer';
 
-const multer = Multer({
-    storage: Multer.memoryStorage(),
-    limits: {
-        fileSize: 5 * 1024 * 1024, //? to be changed if needed
-    },
-});
+import { validateToken } from '../controllers/auth.js';
+import multer from '../middlewares/multer-config.js';
 
 const router = Router();
 
@@ -25,12 +20,12 @@ router.get('/:id', getBookByID)
 
 router.get('/bestrating', getBestBooks)
 
-router.post('/', multer.any(),createBook)
+router.post('/', validateToken, multer, createBook)
 
-router.put('/:id', updateBook)
+router.put('/:id', validateToken, updateBook)
 
-router.delete('/:id', deleteBook)
+router.delete('/:id', validateToken, deleteBook)
 
-router.post('/:id/rating', rateBook)
+router.post('/:id/rating', validateToken, rateBook)
 
 export default router;
