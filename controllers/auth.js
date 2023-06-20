@@ -2,21 +2,6 @@ import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
-// const login = async (req, res) => {
-//     console.log('Requête reçue pour login!');
-//     console.log(req.headers['authorization']);
-//     res.status(200).json({
-//         message: 'Requête reçue pour login avec contenu: ' + req.headers['authorization']
-//     });
-// };
-
-// const signup = async (req, res) => {
-//     console.log("Requête reçue pour signup!");
-//     res.status(200).json({
-//         message: 'Requête reçue pour signup!'
-//     });
-// };
-
 const signup = async (req, res) => {
 
     if (!req.body.email || !req.body.password) {
@@ -41,8 +26,6 @@ const signup = async (req, res) => {
         .then(() => res.status(201).json({ message: "User created successfully" }))
         .catch(error => res.status(400).json({ error }))
         .finally(() => console.log("User created successfully"));   //! Debug
-
-
 };
 
 const login = async (req, res) => {
@@ -68,23 +51,44 @@ const genToken = (email, key) => {
     });
 };
 
-const isTokenValidated = (req, res, next) => {
-    const token = req.headers['authorization'];
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided, please connect' });
-    }
-    jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ error: 'Invalid token, please reconnect' });
+const validateToken = (req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+
+        if (!token) {
+            console.log('No token provided, please connect')   //! Debug
+            return res.status(401).json({ error: 'No token provided, please connect' });
         }
-    });
-    return true;
+
+        const decodedToken = jwt.verify(token, process.env.TOKEN_KEY);
+        const userId = decodedToken.userId;
+
+        if (req.body.userId !== userId) {
+            console.log('Invalid user ID, please reconnect')   //! Debug
+            return res.status(401).json({ error: 'Invalid user ID, please reconnect' });
+        }
+
+        jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
+            if (err) {
+                console.log('Invalid token, please reconnect')   //! Debug
+                return res.status(401).json({ error: 'Invalid token, please reconnect' });
+            }
+        });
+
+        next();
+    } catch (error) {
+        console.log(error)  //! Debug
+        return res.status(401).json({ error: 'Invalid token, please reconnect' });
+    }
+
 }
+
+
 
 
 
 export {
     login,
     signup,
-    isTokenValidated
+    validateToken
 }
