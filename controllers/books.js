@@ -1,5 +1,5 @@
 import Book from "../models/Book.js";
-import { isTokenValidated } from "./auth.js";
+import { validateToken } from "./auth.js";
 
 
 
@@ -20,30 +20,27 @@ const getBestBooks = (req, res) => {
 };
 
 const createBook =  (req, res) => {
+try {
+    const book = JSON.parse(req.body.book);
 
-    const rawBook = req.body.book;
-    const parsedBook = JSON.parse(rawBook);
+    book._id? delete book._id : null;
+    book._userId? delete book._userId : null;
 
-    const book = new Book({
-        userId: parsedBook.userId,
-        title: parsedBook.title,
-        author: parsedBook.author,
-        // imageUrl: req.body.book.imageUrl,
-        imageUrl: "https://www.randonnee-urbain-v.com/es/wp-content/uploads/sites/6/2015/04/livres.jpg",
-        year: parsedBook.year,
-        genre: parsedBook.genre,
+    const newBook = new Book({
+        ...book,
+        imageUrl: `${req.protocol}://${req.get('host')}/book_covers/${req.file.filename}`,
         ratings: [],
         averageRating: 0
     });
 
-    book.save()
+    newBook.save()
         .then(() => res.status(201).json({ message: "Book created successfully" }))
         .catch(error => res.status(400).json({ error }))
-        .catch(error => console.log(error)) //! Debug
         .finally(() => console.log("Book created successfully"));  //! Debug
-
-    console.log(book) //! Debug
-
+    } catch (error) {
+        console.log(error)   //! Debug
+        res.status(400).json({ error })
+    }
 };
 
 // const createBook = (req, res) => {
