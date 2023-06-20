@@ -46,7 +46,7 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-    const foundUser = await User.findOne({ email: req.body.email });
+    const foundUser = await User.findOne({ email: req.body.email.toLowerCase() });
     if (!foundUser) {
         return res.status(401).json({ error: 'User not found' });
     }
@@ -68,7 +68,7 @@ const genToken = (email, key) => {
     });
 };
 
-const verifyToken = (req, res, next) => {
+const isTokenValidated = (req, res, next) => {
     const token = req.headers['authorization'];
     if (!token) {
         return res.status(401).json({ error: 'No token provided, please connect' });
@@ -78,6 +78,7 @@ const verifyToken = (req, res, next) => {
             return res.status(401).json({ error: 'Invalid token, please reconnect' });
         }
     });
+    return true;
 }
 
 
@@ -85,5 +86,5 @@ const verifyToken = (req, res, next) => {
 export {
     login,
     signup,
-    verifyToken
+    isTokenValidated
 }
