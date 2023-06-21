@@ -16,9 +16,9 @@ const router = Router();
 
 router.get('/', getBooks)
 
-router.get('/:id', getBookByID)
-
 router.get('/bestrating', getBestBooks)
+
+router.get('/:id', getBookByID)
 
 router.post('/', validateToken, multer, createBook)
 
@@ -27,5 +27,7 @@ router.put('/:id', validateToken, updateBook)
 router.delete('/:id', validateToken, deleteBook)
 
 router.post('/:id/rating', validateToken, rateBook)
+
+
 
 export default router;
