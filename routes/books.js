@@ -22,7 +22,7 @@ router.get('/:id', getBookByID)
 
 router.post('/', validateToken, multer, createBook)
 
-router.put('/:id', validateToken, updateBook)
+router.put('/:id', validateToken, multer, updateBook)
 
 router.delete('/:id', validateToken, deleteBook)
 
