@@ -30,6 +30,7 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
     const foundUser = await User.findOne({ email: req.body.email.toLowerCase() });
+    
     if (!foundUser) {
         return res.status(401).json({ error: 'User not found' });
     }
@@ -39,13 +40,13 @@ const login = async (req, res) => {
     }
     res.status(200).json({
         userId: foundUser._id,
-        token: genToken(foundUser.email, process.env.TOKEN_KEY)
+        token: genToken(foundUser.id, process.env.TOKEN_KEY)
     });
-    console.log(foundUser)  //! Debug
+
 };
 
-const genToken = (email, key) => {
-    return jwt.sign({ email }, key, {
+const genToken = (userId, key) => {
+    return jwt.sign({ userId }, key, {
         algorithm: 'HS256',
         expiresIn: process.env.TOKEN_EXPIRATION
     });
@@ -54,19 +55,13 @@ const genToken = (email, key) => {
 const validateToken = (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-
         if (!token) {
             console.log('No token provided, please connect')   //! Debug
-            return res.status(401).json({ error: 'No token provided, please connect' });
+            return res.status(401).json({ error: 'No token provided, please reconnect' });
         }
 
         const decodedToken = jwt.verify(token, process.env.TOKEN_KEY);
         const userId = decodedToken.userId;
-
-        if (req.body.userId !== userId) {
-            console.log('Invalid user ID, please reconnect')   //! Debug
-            return res.status(401).json({ error: 'Invalid user ID, please reconnect' });
-        }
 
         jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
             if (err) {
@@ -74,6 +69,8 @@ const validateToken = (req, res, next) => {
                 return res.status(401).json({ error: 'Invalid token, please reconnect' });
             }
         });
+        req.userId? delete req.userId : null
+        req.userId = userId;
 
         next();
     } catch (error) {
