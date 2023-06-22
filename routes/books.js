@@ -9,7 +9,8 @@ import {
     rateBook
 } from '../controllers/books.js';
 
-import { validateToken } from '../controllers/auth.js';
+import { validateToken } from '../utils/utils.js';
+
 import multer from '../middlewares/multer-config.js';
 
 const router = Router();
