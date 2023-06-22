@@ -29,6 +29,4 @@ router.delete('/:id', validateToken, deleteBook)
 
 router.post('/:id/rating', validateToken, rateBook)
 
-
-
 export default router;
