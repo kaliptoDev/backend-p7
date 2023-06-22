@@ -1,6 +1,7 @@
 import User from '../models/User.js';
-import jwt from 'jsonwebtoken';
+
 import bcrypt from 'bcrypt';
+import { genToken } from '../utils/utils.js';
 
 const signup = async (req, res) => {
 
@@ -24,13 +25,13 @@ const signup = async (req, res) => {
     });
     user.save()
         .then(() => res.status(201).json({ message: "User created successfully" }))
-        .catch(error => res.status(400).json({ error }))
-        .finally(() => console.log("User created successfully"));   //! Debug
+        .then(() => console.log("User created successfully"))  //! Debug
+        .catch(error => res.status(400).json({ error }));
 };
 
 const login = async (req, res) => {
     const foundUser = await User.findOne({ email: req.body.email.toLowerCase() });
-    
+
     if (!foundUser) {
         return res.status(401).json({ error: 'User not found' });
     }
@@ -45,40 +46,9 @@ const login = async (req, res) => {
 
 };
 
-const genToken = (userId, key) => {
-    return jwt.sign({ userId }, key, {
-        algorithm: 'HS256',
-        expiresIn: process.env.TOKEN_EXPIRATION
-    });
-};
 
-const validateToken = (req, res, next) => {
-    try {
-        const token = req.headers.authorization.split(' ')[1];
-        if (!token) {
-            console.log('No token provided, please connect')   //! Debug
-            return res.status(401).json({ error: 'No token provided, please reconnect' });
-        }
 
-        const decodedToken = jwt.verify(token, process.env.TOKEN_KEY);
-        const userId = decodedToken.userId;
 
-        jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
-            if (err) {
-                console.log('Invalid token, please reconnect')   //! Debug
-                return res.status(401).json({ error: 'Invalid token, please reconnect' });
-            }
-        });
-        req.userId? delete req.userId : null
-        req.userId = userId;
-
-        next();
-    } catch (error) {
-        console.log(error)  //! Debug
-        return res.status(401).json({ error: 'Invalid token, please reconnect' });
-    }
-
-}
 
 
 
@@ -86,6 +56,5 @@ const validateToken = (req, res, next) => {
 
 export {
     login,
-    signup,
-    validateToken
+    signup
 }
