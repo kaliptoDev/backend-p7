@@ -3,12 +3,11 @@ import { connect } from 'mongoose';
 import User from './models/User.js';
 import Book from './models/Book.js';
 import { config } from 'dotenv';
-// const auth_routes = require('./routes/auth.js');
-import auth_routes from './routes/auth.js';
-import books_routes from './routes/books.js';
+import auth_endpoints from './controllers/auth.js';
+import books_endpoints from './controllers/books.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+import routes from './routes/routes.js';
 
 
 
@@ -31,7 +30,7 @@ connect(`mongodb+srv://${process.env.DBUSER}:${process.env.DBPASSWORD}@grimoire.
 //* handle json
 app.use(json());
 
-//* cors (maybe check for cors() )
+//* cors headers
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -39,19 +38,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api/auth', auth_routes);
-app.use('/api/books', books_routes);
+app.use(`/api/${routes.AUTH}`, auth_endpoints);
+app.use(`/api/${routes.BOOKS}`, books_endpoints);
 app.use('/book_covers', express.static(path.join(__dirname, 'book_covers')));
-
-// routing
-// app.use(router);
-
-
-
-
-// CONTROLLER
-// endpoints
-// router.use('/api/auth', require('./routes/auth.js'))
-// app.use('/api/books', require('./api/books.js'))
 
 export default app;
