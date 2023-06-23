@@ -1,49 +1,39 @@
 import fs from 'fs';
-import jwt from 'jsonwebtoken';
+import sharp from 'sharp';
+import path from 'path';
 
 const deleteFile = (path) => {
     fs.unlink(`./${path}`, (err) => {
         if (err) {
-        console.error(err);
-        return;
+            console.error(err);
+            return;
         }
     });
 };
 
-const genToken = (userId, key) => {
-    return jwt.sign({ userId }, key, {
-        algorithm: 'HS256',
-        expiresIn: process.env.TOKEN_EXPIRATION
-    });
-};
-
-const validateToken = (req, res, next) => {
+const optimizeImage = async (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        if (!token) {
-            console.log('No token provided, please connect')   //! Debug
-            return res.status(401).json({ error: 'No token provided, please reconnect' });
+        await sharp(req.file.path)
+            .resize(206, 260)
+            .toFile(`./book_covers/${req.file.filename}`), (err, info) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                console.log(info);
+            };
+        try {
+            deleteFile(path.normalize(req.file.path))
+        } catch (error) {
+            console.log(error)
+            throw new Error(error)
         }
-
-        const decodedToken = jwt.verify(token, process.env.TOKEN_KEY);
-        const userId = decodedToken.userId;
-
-        jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
-            if (err) {
-                console.log('Invalid token, please reconnect')   //! Debug
-                return res.status(401).json({ error: 'Invalid token, please reconnect' });
-            }
-        });
-        req.userId? delete req.userId : null
-        req.userId = userId;
-
-        next();
     } catch (error) {
-        console.log(error)  //! Debug
-        return res.status(401).json({ error: 'Invalid token, please reconnect' });
+        console.log(error)
+        res.status(400).json({ error })
     }
+    next();
+};
 
-}
 
-
-export { deleteFile, genToken, validateToken };
+export { deleteFile, optimizeImage };
