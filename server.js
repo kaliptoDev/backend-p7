@@ -1,6 +1,5 @@
 import { createServer } from 'http';
 import app from './app.js';
-import * as auth from './routes/auth.js';
 import { config } from 'dotenv';
 config();
 
