@@ -8,7 +8,7 @@ const signup = async (req, res) => {
         if (!req.body.email || !req.body.password) {
             return res.status(400);
         }
-        req.body.email = req.body.email.toLowerCase();
+        req.body.email = req.body.email?.toLowerCase();
         const foundUser = await User.findOne({ email: req.body.email });
         if (foundUser) {
             console.log('Email already used by another user')   //! Debug
@@ -31,7 +31,7 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const foundUser = await User.findOne({ email: req.body.email.toLowerCase() });
+        const foundUser = await User.findOne({ email: req.body.email?.toLowerCase() });
         if (!foundUser) {
             return res.status(401);
         }
