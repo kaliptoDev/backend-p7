@@ -12,7 +12,7 @@ const validateToken = (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1];
         if (!token) {
             console.log('No token provided, please connect')   //! Debug
-            return res.status(401).json({ error: 'Wrong Access Token' });
+            return res.status(401);
         }
 
         const decodedToken = jwt.verify(token, process.env.TOKEN_KEY);
@@ -21,7 +21,7 @@ const validateToken = (req, res, next) => {
         jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
             if (err) {
                 console.log('Invalid token, please reconnect')   //! Debug
-                return res.status(401).json({ error: 'Invalid token, please reconnect' });
+                return res.status(401);
             }
         });
         req.userId? delete req.userId : null
@@ -30,7 +30,7 @@ const validateToken = (req, res, next) => {
         next();
     } catch (error) {
         console.log(error)  //! Debug
-        return res.status(401).json({ error: 'Invalid token, please reconnect' });
+        return res.status(401);
     }
 
 }

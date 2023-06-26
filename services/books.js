@@ -4,17 +4,17 @@ import { deleteFile } from "../utils/utils.js";
 
 const getBooks = async (req, res) => {
     const books = await Book.find();
-    books == null ? res.status(404).json({ message: "No books found" }) : res.status(200).json(books);
+    books == null ? res.status(404) : res.status(200).json(books);
 };
 
 const getBookByID = async (req, res) => {
     const book = await Book.findById(req.params.id);
-    book == null ? res.status(404).json({ message: "No book found" }) : res.status(200).json(book);
+    book == null ? res.status(404) : res.status(200).json(book);
 };
 
 const getBestBooks = async (req, res) => {
     const books = await Book.find().sort({ averageRating: -1 }).limit(3);
-    books == null ? res.status(404).json({ message: "No books found" }) : res.status(200).json(books);
+    books == null ? res.status(404) : res.status(200).json(books);
 };
 
 const createBook = (req, res) => {
@@ -58,7 +58,7 @@ const updateBook = async (req, res) => {
                 res.status(400).json({ error })
             };
         } else {
-            res.status(403).json({ error: "You are not allowed to do this" })
+            res.status(403).json({ error: "unauthorized request" })
         }
     }
     catch (error) {
@@ -80,7 +80,7 @@ const deleteBook = async (req, res) => {
                 .then(() => res.status(200).json({ message: "Book deleted successfully" }))
                 .catch(error => res.status(400).json({ error }))
         } else {
-            res.status(403).json({ error: "You are not allowed to do this" })
+            res.status(403).json({ error: "unauthorized request" })
         }
     }
     catch (error) {
@@ -103,7 +103,7 @@ const rateBook = async (req, res) => {
         res.status(200).json(book)
     }
     catch (error) {
-        res.status(400).json({ error })
+        res.status(400)
     }
 };
 
